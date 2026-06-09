@@ -1,0 +1,22 @@
+﻿#pragma once
+
+//継承の場合のみインクルードを許可します！！！
+#include"../BaseScene/BaseScene.h"
+
+class GameScene : public BaseScene
+{
+public:
+
+	GameScene() { Init(); }
+	~GameScene() {}
+
+
+	void Init()override;
+	void Update()override;
+	void DrawSprite()override;
+	void Release()override;
+
+private:
+
+};
+
