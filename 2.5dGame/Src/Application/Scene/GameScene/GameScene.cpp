@@ -1,23 +1,32 @@
 ﻿#include "GameScene.h"
 #include "../SceneManager.h"
 
-void GameScene::Init()
-{
-}
+#include "../../Object/Player/Player.h"
+//#include "../../Object/Ground/Ground.h"
+#include "../../Object/Enemy/Enemy.h"
 
-void GameScene::Update()
+void GameScene::Event()
 {
-	if (GetAsyncKeyState(VK_RETURN) & 0x8000)
+	if (GetAsyncKeyState('T') & 0x8000)
 	{
-		SceneManager::Instance().SetNextScene(SceneManager::SceneType::Title);
+		SceneManager::Instance().SetNextScene(SceneManager::SceneType::Result);
 	}
 }
 
-void GameScene::DrawSprite()
+void GameScene::Init()
 {
-	KdShaderManager::Instance().m_spriteShader.DrawCircle(0, 0, 100);
-}
+	// カメラ実体化
+	m_camera = std::make_unique<KdCamera>();
 
-void GameScene::Release()
-{
+	// 地面追加
+	//std::shared_ptr<Ground> ground = std::make_shared<Ground>();
+	//m_objList.push_back(ground);
+
+	// プレイヤー追加
+	m_player = std::make_shared<Player>();
+	m_objList.push_back(m_player);
+
+	// 敵（雑魚）を追加
+	std::shared_ptr<Enemy> enemy = std::make_shared<Enemy>();
+	m_objList.push_back(enemy);
 }

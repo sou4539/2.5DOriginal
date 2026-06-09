@@ -1,22 +1,20 @@
 ﻿#pragma once
 
-//継承の場合のみインクルードを許可します！！！
-#include"../BaseScene/BaseScene.h"
+#include "../BaseScene/BaseScene.h"
+
+class Player;
 
 class GameScene : public BaseScene
 {
 public:
 
 	GameScene() { Init(); }
-	~GameScene() {}
-
-
-	void Init()override;
-	void Update()override;
-	void DrawSprite()override;
-	void Release()override;
+	~GameScene() override {}
 
 private:
 
-};
+	void Event() override;
+	void Init()  override;
 
+	std::shared_ptr<Player> m_player;
+};

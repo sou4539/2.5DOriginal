@@ -1,57 +1,73 @@
 ﻿#include "SceneManager.h"
 
-//各シーンのヘッダーをインクルード
+#include "BaseScene/BaseScene.h"
 #include "TitleScene/TitleScene.h"
 #include "GameScene/GameScene.h"
 
-void SceneManager::preUpdate()
+void SceneManager::PreUpdate()
 {
-	//シーン切り替え
+	// シーン切替
 	if (m_currentSceneType != m_nextSceneType)
 	{
 		ChangeScene(m_nextSceneType);
 	}
+
+	m_currentScene->PreUpdate();
 }
 
 void SceneManager::Update()
 {
-	//ポリモーフィズム
-	//同じ関数名であっても、呼び出すオブジェクトによって処理内容が変わること
 	m_currentScene->Update();
+}
+
+void SceneManager::PostUpdate()
+{
+	m_currentScene->PostUpdate();
+}
+
+void SceneManager::PreDraw()
+{
+	m_currentScene->PreDraw();
 }
 
 void SceneManager::Draw()
 {
+	m_currentScene->Draw();
+}
+
+void SceneManager::DrawSprite()
+{
 	m_currentScene->DrawSprite();
 }
 
-void SceneManager::Init()
+void SceneManager::DrawDebug()
 {
-	ChangeScene(m_currentSceneType);
+	m_currentScene->DrawDebug();
 }
 
-void SceneManager::Release()
+const std::list<std::shared_ptr<KdGameObject>>& SceneManager::GetObjList()
 {
+	return m_currentScene->GetObjList();
+}
+
+void SceneManager::AddObject(const std::shared_ptr<KdGameObject>& _obj)
+{
+	m_currentScene->AddObject(_obj);
 }
 
 void SceneManager::ChangeScene(SceneType _sceneType)
 {
-
-	//①次のシーンを作成し、②フラグを更新する
-
-	//①
+	// 次のシーンを作成し、現在のシーンにする
 	switch (_sceneType)
 	{
 	case SceneType::Title:
-		//アップキャスト
 		m_currentScene = std::make_shared<TitleScene>();
 		break;
 	case SceneType::Game:
-		//アップキャスト
-		m_currentScene=std::make_shared<GameScene>();
+		m_currentScene = std::make_shared<GameScene>();
 		break;
 	}
 
-	//②フラグを更新
+	// 現在のシーン情報を更新
 	m_currentSceneType = _sceneType;
 }

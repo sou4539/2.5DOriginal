@@ -1,72 +1,76 @@
 ﻿#pragma once
 
-//前方宣言
 class BaseScene;
 
-//全てのシーンを管理するクラス
 class SceneManager
 {
 public:
 
-	//シーン情報
-	//enum = 列挙型 ・・・複数の定数をまとめて管理するための型
-	//入る値は０から順番にint型で割り当てられる
-	enum SceneType
+	// シーン情報
+	enum class SceneType
 	{
-		Title,	//タイトルシーン
-		Game,	//ゲームシーン
+		Title,
+		Game,
+		Result,
 	};
 
-	//Updateの前に実行するUpdate
-	void preUpdate();
-
+	void PreUpdate();
 	void Update();
-	void Draw();
+	void PostUpdate();
 
-	//外部から次のシーンをセットする関数
-	//※この関数ではシーンは切り替わらない
+	void PreDraw();
+	void Draw();
+	void DrawSprite();
+	void DrawDebug();
+
+	// 次のシーンをセット (次のフレームから切り替わる)
 	void SetNextScene(SceneType _nextScene)
 	{
 		m_nextSceneType = _nextScene;
 	}
 
-	//現在のシーンを取得する関数
-	SceneType GetCurrentScene() const
+	// 現在のシーンのオブジェクトリストを取得
+	const std::list<std::shared_ptr<KdGameObject>>& GetObjList();
+
+	// 現在のシーンにオブジェクトを追加
+	void AddObject(const std::shared_ptr<KdGameObject>& _obj);
+
+private:
+
+	// マネージャーの初期化
+	// インスタンス生成(アプリ起動)時にコンストラクタで自動実行
+	void Init()
 	{
-		return m_currentSceneType;
+		// 開始シーンに切り替え
+		ChangeScene(m_currentSceneType);
 	}
 
-private:
-
-	//初期化や解放は自分でする
-	void Init();
-	void Release();
-
-	//シーン切替の関数
+	// シーン切り替え関数
 	void ChangeScene(SceneType _sceneType);
 
-	//原罪のシーンを管理するポインタ変数
-	std::shared_ptr<BaseScene> m_currentScene;
+	// 現在のシーンのインスタンスを保持しているポインタ
+	std::shared_ptr<BaseScene> m_currentScene = nullptr;
 
-	//現在のシーンを管理するフラグ変数
-	SceneType m_currentSceneType = SceneType::Title;
-	//次のシーンを管理するフラグ変数
+	// 現在のシーンの種類を保持している変数
+	SceneType m_currentSceneType = SceneType::Game;
+
+	// 次のシーンの種類を保持している変数
 	SceneType m_nextSceneType = m_currentSceneType;
 
-	//シングルトンパターン(デザインパターン)
-	//実態が一つしかないことを証明するためのパターン
 private:
 
-	//外で変数宣言できない
 	SceneManager() { Init(); }
-	~SceneManager() { Release(); }
+	~SceneManager() {}
 
 public:
 
+	// シングルトンパターン
+	// 常に存在する && 必ず1つしか存在しない(1つしか存在出来ない)
+	// どこからでもアクセスが可能で便利だが
+	// 何でもかんでもシングルトンという思考はNG
 	static SceneManager& Instance()
 	{
 		static SceneManager instance;
 		return instance;
 	}
-
 };
