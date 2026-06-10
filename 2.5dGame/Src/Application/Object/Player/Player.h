@@ -11,7 +11,7 @@ public:
 
 	void DrawLit() override;
 	void GenerateDepthMapFromLight() override;
-	
+
 
 private:
 	void Init() override;
@@ -20,4 +20,5 @@ private:
 	//std::shared_ptr<KdModelData> m_model = nullptr;
 	std::shared_ptr<KdSquarePolygon> m_polygon;
 	Math::Vector3 m_pos;
+	float m_speed = 0.2;
 };

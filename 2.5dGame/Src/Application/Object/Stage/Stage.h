@@ -11,7 +11,11 @@ public:
 
 	void DrawLit() override;
 	//void GenerateDepthMapFromLight() override;
-	void SetPos(const Math::Vector3 &_pos)override { m_pos = _pos; }
+
+	void SetPos(const Math::Vector3& _pos)override
+	{
+		m_pos = _pos;
+	}
 
 private:
 	void Init() override;
@@ -19,4 +23,5 @@ private:
 
 	std::shared_ptr<KdModelData> m_model = nullptr;
 	Math::Vector3 m_pos;
+	static const int StageNum = 4;
 };

@@ -19,11 +19,11 @@ void Ground::Init()
 
 	// 座標行列
 	Math::Matrix transMat;
-	transMat = Math::Matrix::CreateTranslation(0, 0, 0);
+	transMat = Math::Matrix::CreateTranslation(0, -0.5, 0);
 
 	// 拡縮行列
 	Math::Matrix scaleMat;
-	scaleMat = Math::Matrix::CreateScale(100.0f);
+	scaleMat = Math::Matrix::CreateScale(10.0f);
 	//scaleMat = Math::Matrix::CreateScale(100.0f, 100.0f, 100.0f);
 
 	// 行列合成 (S * R * T)

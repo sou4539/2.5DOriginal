@@ -2,12 +2,10 @@
 
 #include "Scene/SceneManager.h"
 
-
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
 // エントリーポイント
 // アプリケーションはこの関数から進行する
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
-
 int WINAPI WinMain(_In_ HINSTANCE, _In_opt_  HINSTANCE, _In_ LPSTR, _In_ int)
 {
 	// メモリリークを知らせる
@@ -31,8 +29,6 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_  HINSTANCE, _In_ LPSTR, _In_ int)
 
 	// COM解放
 	CoUninitialize();
-
-
 
 	return 0;
 }
@@ -79,6 +75,7 @@ void Application::Update()
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
 void Application::PostUpdate()
 {
+	SceneManager::Instance().PostUpdate();
 }
 
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
@@ -111,6 +108,7 @@ void Application::KdPostDraw()
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
 void Application::PreDraw()
 {
+	SceneManager::Instance().PreDraw();
 }
 
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
@@ -118,36 +116,7 @@ void Application::PreDraw()
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
 void Application::Draw()
 {
-	// ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
-	// 光を遮るオブジェクト(不透明な物体や2Dキャラ)はBeginとEndの間にまとめてDrawする
-	KdShaderManager::Instance().m_StandardShader.BeginGenerateDepthMapFromLight();
-	{
-	}
-	KdShaderManager::Instance().m_StandardShader.EndGenerateDepthMapFromLight();
-
-
-	// ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
-	// 陰影のあるオブジェクト(不透明な物体や2Dキャラ)はBeginとEndの間にまとめてDrawする
-	KdShaderManager::Instance().m_StandardShader.BeginLit();
-	{
-	}
-	KdShaderManager::Instance().m_StandardShader.EndLit();
-
-
-	// ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
-	// 陰影のないオブジェクト(透明な部分を含む物体やエフェクト)はBeginとEndの間にまとめてDrawする
-	KdShaderManager::Instance().m_StandardShader.BeginUnLit();
-	{
-	}
-	KdShaderManager::Instance().m_StandardShader.EndUnLit();
-
-
-	// ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
-	// 光源オブジェクト(自ら光るオブジェクトやエフェクト)はBeginとEndの間にまとめてDrawする
-	KdShaderManager::Instance().m_postProcessShader.BeginBright();
-	{
-	}
-	KdShaderManager::Instance().m_postProcessShader.EndBright();
+	SceneManager::Instance().Draw();
 }
 
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
@@ -158,12 +127,8 @@ void Application::PostDraw()
 	// 画面のぼかしや被写界深度処理の実施
 	KdShaderManager::Instance().m_postProcessShader.PostEffectProcess();
 
-	// ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
-	// デバッグ情報の描画はこの間で行う
-	KdShaderManager::Instance().m_StandardShader.BeginUnLit();
-	{
-	}
-	KdShaderManager::Instance().m_StandardShader.EndUnLit();
+	// 現在のシーンのデバッグ描画
+	SceneManager::Instance().DrawDebug();
 }
 
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
@@ -175,9 +140,7 @@ void Application::DrawSprite()
 	// 2Dの描画はこの間で行う
 	KdShaderManager::Instance().m_spriteShader.Begin();
 	{
-		//シーン描画
-		SceneManager::Instance().Draw();
-
+		SceneManager::Instance().DrawSprite();
 	}
 	KdShaderManager::Instance().m_spriteShader.End();
 }
@@ -187,7 +150,6 @@ void Application::DrawSprite()
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
 bool Application::Init(int w, int h)
 {
-
 	//===================================================================
 	// ウィンドウ作成
 	//===================================================================
@@ -258,19 +220,6 @@ bool Application::Init(int w, int h)
 	//===================================================================
 	// 例えばカーソルを消したい場合
 	//ShowCursor(false);
-
-	//タイトルシーン初期化
-	//m_titleScene = new TitleScene();
-	//↑コレ！！！！！
-	// 実体化（インスタンス化）
-
-	//アップキャスト
-	//m_nowScene = std::make_shared<GameScene>();
-	
-	// 
-	//m_titleScene->Init();
-	//黒﨑教はコンストラクタでInit関数を呼ぶ
-	//だからInit関数は呼ばなくていい
 
 	return true;
 }
@@ -375,7 +324,8 @@ void Application::Execute()
 
 		m_fpsController.Update();
 
-		std::string titlrBar = "ゲーム名 FPS : " + std::to_string(m_fpsController.m_nowfps);
+
+		std::string titlrBar = "A little ( Magic + Grow ) FPS : " + std::to_string(m_fpsController.m_nowfps);
 		SetWindowTextA(m_window.GetWndHandle(), titlrBar.c_str());
 	}
 
@@ -388,10 +338,6 @@ void Application::Execute()
 // アプリケーション終了
 void Application::Release()
 {
-	//newしたらdeleteする
-	//リリース
-	//スマートポインタの場合はリリースする必要がない
-
 	KdInputManager::Instance().Release();
 
 	KdShaderManager::Instance().Release();

@@ -4,6 +4,9 @@
 
 void Player::Init()
 {
+	//デバック用
+	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
+
 	m_polygon = std::make_shared<KdSquarePolygon>();
 	m_polygon->SetMaterial("Asset/Textures/Object/Player/Player.png");
 
@@ -12,7 +15,7 @@ void Player::Init()
 	//画像を分割
 	m_polygon->SetSplit(3, 4);
 	//プレイヤーの初期位置
-	m_pos = { -20,2,0 };
+	m_pos = { };
 }
 
 void Player::Update()
@@ -21,11 +24,13 @@ void Player::Update()
 	// 2.5D仕様の移動速度調整 (左右移動のみ)
 	if (GetAsyncKeyState('A') & 0x8000)
 	{
-		m_pos.x -= 0.2f;
+		m_pos.x -= m_speed;
+		m_polygon->SetUVRect(9);
 	}
 	if (GetAsyncKeyState('D') & 0x8000)
 	{
-		m_pos.x += 0.2f;
+		m_pos.x += m_speed;
+		m_polygon->SetUVRect(11);
 	}
 
 	// 画面外はみ出し防止（仕様書の-15.0f ～ +15.0f制限）
