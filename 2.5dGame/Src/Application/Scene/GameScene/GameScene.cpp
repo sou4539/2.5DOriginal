@@ -5,7 +5,6 @@
 #include "../../Object/Ground/Ground.h"
 #include "../../Object/Enemy/Enemy.h"
 #include "../../Object/Stage/Stage.h"
-#include "../../Object/Weapon/Weapon.h"
 
 void GameScene::Event()
 {
@@ -46,9 +45,4 @@ void GameScene::Init()
 		stage->SetPos({ 0,0,i * 12.0f - 1.0f });
 		m_objList.push_back(stage);
 	}
-
-	// 武器を追加
-	std::shared_ptr<Weapon> weapon;
-	weapon = std::make_shared<Weapon>();
-	m_objList.push_back(weapon);
 }

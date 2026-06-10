@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-class Player;
-
 class Weapon : public KdGameObject
 {
 public:
@@ -14,6 +12,10 @@ public:
 	void DrawLit() override;
 	//void GenerateDepthMapFromLight() override;
 	
+	void SetPos(const Math::Vector3& _pos)override
+	{
+		m_pos = _pos;
+	}
 
 private:
 	void Init() override;
@@ -22,8 +24,6 @@ private:
 	std::shared_ptr<KdSquarePolygon> m_polygon = nullptr;
 	Math::Vector3 m_pos;
 
-	std::shared_ptr<Player> player;
 
-	float ShotWait = 0.0;
 	bool ShotFlg = false;
 };

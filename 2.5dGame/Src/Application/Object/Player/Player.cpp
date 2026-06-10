@@ -1,11 +1,14 @@
 ﻿#include "Player.h"
 
+#include "../Weapon/Weapon.h"
 #include "../../Scene/SceneManager.h"
 
 void Player::Init()
 {
 	//デバック用
 	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
+
+
 
 	m_polygon = std::make_shared<KdSquarePolygon>();
 	m_polygon->SetMaterial("Asset/Textures/Object/Player/Player.png");
@@ -33,9 +36,18 @@ void Player::Update()
 		m_polygon->SetUVRect(11);
 	}
 
-	// 画面外はみ出し防止（仕様書の-15.0f ～ +15.0f制限）
-	if (m_pos.x < -15.0f) m_pos.x = -15.0f;
-	if (m_pos.x > 15.0f) m_pos.x = 15.0f;
+
+	if (ShotWait == 0)
+	{
+		std::shared_ptr<Weapon> m_weapon;
+		m_weapon = std::make_shared<Weapon>();
+		m_weapon->SetPos(m_pos);
+		SceneManager::Instance().AddObject(m_weapon);
+		ShotWait = 30;
+	}
+
+	ShotWait--;
+	if (ShotWait <= 0)ShotWait = 0;
 
 	// 座標行列の作成とワールド行列の更新
 	m_mWorld = Math::Matrix::CreateTranslation(m_pos);

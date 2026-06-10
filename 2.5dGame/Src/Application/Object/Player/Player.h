@@ -21,4 +21,6 @@ private:
 	std::shared_ptr<KdSquarePolygon> m_polygon;
 	Math::Vector3 m_pos;
 	float m_speed = 0.2;
+
+	float ShotWait = 0.0;
 };
