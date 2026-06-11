@@ -7,7 +7,7 @@ public:
 	~Weapon() override { Release(); }
 
 	void Update() override;
-	//void PostUpdate() override;
+	void PostUpdate() override;
 
 	void DrawLit() override;
 	//void GenerateDepthMapFromLight() override;

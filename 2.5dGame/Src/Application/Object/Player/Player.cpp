@@ -8,8 +8,6 @@ void Player::Init()
 	//デバック用
 	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
 
-
-
 	m_polygon = std::make_shared<KdSquarePolygon>();
 	m_polygon->SetMaterial("Asset/Textures/Object/Player/Player.png");
 
@@ -151,6 +149,8 @@ void Player::PostUpdate()
 	{
 		//Z方向への押し戻しを無効
 		hitDir.z = 0;
+		//Y方向への押し戻しを無効
+		hitDir.y = 0;
 		//方向ベクトルは絶対長さ１
 		//正規化(長さが１)
 		hitDir.Normalize();
