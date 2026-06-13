@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+class Enemy;
+
 class Weapon : public KdGameObject
 {
 public:
@@ -26,4 +28,5 @@ private:
 
 
 	bool ShotFlg = false;
+	std::shared_ptr<Enemy> m_enemy;
 };

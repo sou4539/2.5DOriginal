@@ -3,7 +3,7 @@
 void Stage::Init()
 {
 	//初期化
-	m_pos = { -7.0f,0.5f,0 };
+	m_pos = { -7.0f,0,0 };
 	//●モデルの読み込み
 	//ポインタのままでは使い物にならないので、実体化
 	m_model = std::make_shared<KdModelData>();
@@ -14,7 +14,7 @@ void Stage::Init()
 	m_pCollider = std::make_unique<KdCollider>();
 	//モデルの形状で当たり判定を登録
 	m_pCollider->RegisterCollisionShape(
-		"GroundCollision",
+		"StageCollision",
 		m_model,
 		KdCollider::TypeGround);
 

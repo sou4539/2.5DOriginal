@@ -1,5 +1,6 @@
 ﻿#include "Weapon.h"
 
+#include "../Enemy/Enemy.h"
 #include "../../Scene/SceneManager.h"
 
 void Weapon::Update()
@@ -25,57 +26,59 @@ void Weapon::Update()
 
 void Weapon::PostUpdate()
 {
+	float maxOverlap = 0;
+	Math::Vector3 hitPos;
+	bool hit = false;
 	//当たる側
 	//=======================================
 	//レイ（光線）判定		必須！！
 	//=======================================
-	KdCollider::RayInfo ray;
-	//レイの発射位置を設定
-	ray.m_pos = m_pos;
-	//ちょっと上からの位置にする
-	ray.m_pos.y += 0.1f;
-	//段差の許容範囲を設定
-	float enableStepHigh = 0.2;
-	ray.m_pos.y += enableStepHigh;
-	//レイの発射方向を設定
-	ray.m_dir = { 0,-1,0 };
-	//レイの長さを設定
-	ray.m_range = enableStepHigh;
-	//当たり判定を行いたいタイプを設定
-	ray.m_type = KdCollider::TypeGround;
+	//KdCollider::RayInfo ray;
+	////レイの発射位置を設定
+	//ray.m_pos = m_pos;
+	////ちょっと上からの位置にする
+	//ray.m_pos.y += 0.1f;
+	////段差の許容範囲を設定
+	//float enableStepHigh = 0.2;
+	//ray.m_pos.y += enableStepHigh;
+	////レイの発射方向を設定
+	//ray.m_dir = { 0,-1,0 };
+	////レイの長さを設定
+	//ray.m_range = enableStepHigh;
+	////当たり判定を行いたいタイプを設定
+	//ray.m_type = KdCollider::TypeDamage;
 
-	//デバック
-	m_pDebugWire->AddDebugLine(ray.m_pos, ray.m_dir, ray.m_range);
+	////デバック
+	//m_pDebugWire->AddDebugLine(ray.m_pos, ray.m_dir, ray.m_range);
 
-	//レイに当たったオブジェクト情報を格納するリスト
-	std::list<KdCollider::CollisionResult> retRayList;
-	//全オブジェクトと当たり判定をする
-	for (auto& obj : SceneManager::Instance().GetObjList())
-	{
-		//それぞれのオブジェクトに対してレイと当たるのかどうかを判定する関数を呼び出す
-		obj->Intersects(ray, &retRayList);
-	}
+	////レイに当たったオブジェクト情報を格納するリスト
+	//std::list<KdCollider::CollisionResult> retRayList;
+	////全オブジェクトと当たり判定をする
+	//for (auto& obj : SceneManager::Instance().GetObjList())
+	//{
+	//	//それぞれのオブジェクトに対してレイと当たるのかどうかを判定する関数を呼び出す
+	//	obj->Intersects(ray, &retRayList);
+	//}
 
-	//レイリストから一番近いオブジェクトを探す
-	float maxOverlap = 0;
-	Math::Vector3 hitPos;
-	bool hit = false;
-	for (auto& ret : retRayList)
-	{
-		//レイを遮断しオーバーした長さが一番長いものを探す
-		if (maxOverlap < ret.m_overlapDistance)
-		{
-			maxOverlap = ret.m_overlapDistance;
-			hitPos = ret.m_hitPos;
-			hit = true;
-		}
-	}
-	if (hit == true)
-	{
-		//当たっていたらその座標をプレイヤーの座標にセット
-		m_pos = hitPos += Math::Vector3(0, -0.1, 0);
+	////レイリストから一番近いオブジェクトを探す
+	//
+	//for (auto& ret : retRayList)
+	//{
+	//	//レイを遮断しオーバーした長さが一番長いものを探す
+	//	if (maxOverlap < ret.m_overlapDistance)
+	//	{
+	//		maxOverlap = ret.m_overlapDistance;
+	//		hitPos = ret.m_hitPos;
+	//		hit = true;
+	//	}
+	//}
+	//if (hit == true)
+	//{
+	//	//当たっていたらその座標をプレイヤーの座標にセット
+	//	m_pos = hitPos += Math::Vector3(0, -0.1, 0);
 
-	}
+	//}
+
 
 	//=======================================
 	//球（スフィア）判定		必須！！！！！！！！！！！
@@ -88,7 +91,7 @@ void Weapon::PostUpdate()
 	//球の半径を設定
 	sphere.m_sphere.Radius = 0.3;
 	//当たり判定をしたいタイプを設定
-	sphere.m_type = KdCollider::TypeGround;
+	sphere.m_type = KdCollider::TypeDamage;
 
 	//デバック
 	m_pDebugWire->AddDebugSphere(sphere.m_sphere.Center, sphere.m_sphere.Radius);
@@ -119,14 +122,11 @@ void Weapon::PostUpdate()
 
 	if (hit == true)
 	{
-		//Z方向への押し戻しを無効
-		hitDir.z = 0;
-		//方向ベクトルは絶対長さ１
-		//正規化(長さが１)
-		hitDir.Normalize();
-
-		//押し戻し処理
-		m_pos += hitDir * maxOverlap;
+		if (m_enemy->GetHp() > 0)
+		{
+			m_enemy->SetHp(1);
+		}
+		m_isExpired = true;
 	}
 }
 
@@ -152,4 +152,7 @@ void Weapon::Init()
 
 	//デバック用
 	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
+
+
+	m_enemy = std::make_shared<Enemy>();
 }
