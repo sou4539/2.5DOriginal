@@ -325,7 +325,7 @@ void Application::Execute()
 		m_fpsController.Update();
 
 
-		std::string titlrBar = "A little ( Magic + Grow ) FPS : " + std::to_string(m_fpsController.m_nowfps);
+		std::string titlrBar = "A Little(Magic + Growth) FPS : " + std::to_string(m_fpsController.m_nowfps);
 		SetWindowTextA(m_window.GetWndHandle(), titlrBar.c_str());
 	}
 
