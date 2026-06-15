@@ -1,7 +1,5 @@
 ﻿#include "Ground.h"
 
-#include "Ground.h"
-
 void Ground::DrawLit()
 {
 	// 地面描画

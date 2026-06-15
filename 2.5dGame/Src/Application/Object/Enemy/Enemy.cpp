@@ -1,5 +1,6 @@
 ﻿#include "Enemy.h"
 
+#include "../Portal/Portal.h"
 #include "../../Scene/SceneManager.h"
 
 void Enemy::Init()
@@ -20,6 +21,8 @@ void Enemy::Init()
 	//プレイヤーの初期位置
 	m_pos = { 0,0,0 };
 
+	m_portal = std::make_shared<Portal>();
+
 	//当たられる側の処理========================================
 	//当たり判定をつけたいから実体化
 	m_pCollider = std::make_unique<KdCollider>();
@@ -27,7 +30,7 @@ void Enemy::Init()
 	m_pCollider->RegisterCollisionShape(
 		"EnemyCollision",		//当たり判定を識別名
 		{ 0,0.5,0 },
-		0.2f,
+		0.4f,
 		KdCollider::TypeDamage);
 	//==========================================================
 }
@@ -39,12 +42,16 @@ void Enemy::Update()
 	m_pos.z -= m_speed;
 
 	if (m_pos.z <= 0)m_pos.z += 30;
-	//if (m_pos.z <= 10)m_isExpired = true;
-
-	if (m_Hp <= 9)m_isExpired = true;
+	if (m_pos.z <= 20)
+	{
+		m_portal->SetPos(m_pos);
+		SceneManager::Instance().AddObject(m_portal);
+		m_isExpired = true;
+	}
+	
 
 	//でかくする
-	Math::Matrix scaleMat = Math::Matrix::CreateScale(1);
+	Math::Matrix scaleMat = Math::Matrix::CreateScale(2);
 	//遠くに置く
 	Math::Matrix transMat = Math::Matrix::CreateTranslation(m_pos);
 
@@ -63,4 +70,9 @@ void Enemy::DrawLit()
 void Enemy::GenerateDepthMapFromLight()
 {
 	KdShaderManager::Instance().m_StandardShader.DrawPolygon(*m_polygon, m_mWorld);
+}
+
+void Enemy::OnHit()
+{
+	m_Hp -= m_Damage;
 }

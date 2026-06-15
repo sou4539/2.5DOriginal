@@ -2,11 +2,12 @@
 
 class Enemy;
 
-class Weapon : public KdGameObject
+class Explode : public KdGameObject
 {
 public:
-	Weapon() { Init(); }
-	~Weapon() override { Release(); }
+
+	Explode() { Init(); }
+	~Explode() override { Release(); }
 
 	void Update() override;
 	void PostUpdate() override;
@@ -36,5 +37,7 @@ private:
 	bool m_outroFlg = false;
 
 	//詠唱速度
-	float m_SpellSpeed = 0.05;
+	float m_SpellSpeed = 0.01;
+
+	float m_anime = 0;
 };

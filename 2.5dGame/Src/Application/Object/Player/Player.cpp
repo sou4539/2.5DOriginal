@@ -1,6 +1,7 @@
 ﻿#include "Player.h"
 
 #include "../Weapon/Weapon.h"
+#include "../Explode/Explode.h"
 #include "../../Scene/SceneManager.h"
 
 void Player::Init()
@@ -16,11 +17,39 @@ void Player::Init()
 	//画像を分割
 	m_polygon->SetSplit(3, 4);
 	//プレイヤーの初期位置
-	m_pos = { };
+	m_pos = { 0,0,-5 };
 }
 
 void Player::Update()
 {
+	if (m_pos.z < 0)
+	{
+		m_pos.z += 0.1;
+	}
+	else
+	{
+		m_pos.z = 0;
+		if (WeaponWait == 0)
+		{
+			std::shared_ptr<Weapon> m_weapon;
+			m_weapon = std::make_shared<Weapon>();
+			m_weapon->SetPos(m_pos);
+			SceneManager::Instance().AddObject(m_weapon);
+			WeaponWait = 30;
+		}
+		//if (ExplodeFlg)
+		{
+			if (ExplodeWait == 0)
+			{
+				std::shared_ptr<Explode> m_explode;
+				m_explode = std::make_shared<Explode>();
+				m_explode->SetPos(m_pos);
+				SceneManager::Instance().AddObject(m_explode);
+				ExplodeWait = 30;
+			}
+		}
+	}
+
 	m_polygon->SetUVRect(10);
 	// 2.5D仕様の移動速度調整 (左右移動のみ)
 	if (GetAsyncKeyState('A') & 0x8000)
@@ -35,17 +64,13 @@ void Player::Update()
 	}
 
 
-	if (ShotWait == 0)
-	{
-		std::shared_ptr<Weapon> m_weapon;
-		m_weapon = std::make_shared<Weapon>();
-		m_weapon->SetPos(m_pos);
-		SceneManager::Instance().AddObject(m_weapon);
-		ShotWait = 30;
-	}
 
-	ShotWait--;
-	if (ShotWait <= 0)ShotWait = 0;
+
+	WeaponWait--;
+	if (WeaponWait <= 0)WeaponWait = 0;
+
+	ExplodeWait--;
+	if (ExplodeWait <= 0)ExplodeWait = 0;
 
 	// 座標行列の作成とワールド行列の更新
 	m_mWorld = Math::Matrix::CreateTranslation(m_pos);

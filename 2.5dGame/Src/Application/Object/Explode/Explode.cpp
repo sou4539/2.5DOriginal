@@ -1,10 +1,11 @@
-﻿#include "Weapon.h"
+﻿#include "Explode.h"
 
 #include "../Enemy/Enemy.h"
 #include "../../Scene/SceneManager.h"
 
-void Weapon::Update()
+void Explode::Update()
 {
+	
 	if (m_outroFlg)
 	{
 		OutroUpdate();
@@ -19,6 +20,7 @@ void Weapon::Update()
 	{
 		d = 0;
 		m_pos.z += 0.5;
+		m_polygon->SetUVRect(0);
 	}
 
 	if (m_pos.z >= 30)
@@ -26,24 +28,19 @@ void Weapon::Update()
 		m_isExpired = true;
 	}
 
-	static float m_anime = 0;
-	m_anime += 0.05;
-	if (m_anime > 4)m_anime = 0;
-	m_polygon->SetUVRect(int(m_anime));
-
 	// 座標行列
 	Math::Matrix transMat;
 	transMat = Math::Matrix::CreateTranslation(m_pos);
 
 	// 拡縮行列
 	Math::Matrix scaleMat;
-	scaleMat = Math::Matrix::CreateScale(1);
+	scaleMat = Math::Matrix::CreateScale(2);
 
 	// 行列合成 (S * R * T)
 	m_mWorld = scaleMat * transMat;
 }
 
-void Weapon::PostUpdate()
+void Explode::PostUpdate()
 {
 	//球判定
 	KdCollider::SphereInfo sphere;
@@ -68,42 +65,46 @@ void Weapon::PostUpdate()
 	}
 }
 
-void Weapon::OutroUpdate()
+void Explode::OutroUpdate()
 {
-	d += 0.5;
+	d += 0.01;
 	if (d > 1)
 	{
 		m_isExpired = true;
 	}
 }
 
-void Weapon::OnHit()
+void Explode::OnHit()
 {
+
+	m_anime += 0.5;
+	m_polygon->SetUVRect(int(m_anime));
 	m_outroFlg = true;
+	
 }
 
-void Weapon::DrawLit()
+void Explode::DrawLit()
 {
 	float range = 0.05;
 	Math::Vector3 color = { 1,0.3,0.3 };
 	KdShaderManager::Instance().m_StandardShader.SetDissolve(d, &range, &color);
 
 	KdShaderManager::Instance().m_StandardShader.DrawPolygon(*m_polygon, m_mWorld);
-
 }
 
-void Weapon::Init()
+void Explode::Init()
 {
 	m_pos = {};
 	d = 1;
-	m_pos.x + 0.5;
+	m_anime = 0;
 	// メモリ確保
 	m_polygon = std::make_shared<KdSquarePolygon>();
 
-	m_polygon->SetSplit(4, 1);
-
 	// モデル読み込み
-	m_polygon->SetMaterial("Asset/Textures/Object/Weapon/Weapon.png");
+	m_polygon->SetMaterial("Asset/Textures/Object/Explode/Explode.png");
+
+	m_polygon->SetSplit(4, 4);
+	m_polygon->SetUVRect(0);
 
 	//画像の原点を変更
 	m_polygon->SetPivot(KdSquarePolygon::PivotType::Center_Bottom);
