@@ -195,6 +195,24 @@ void Player::PostUpdate()
 		//押し戻し処理
 		m_pos += hitDir * maxOverlap;
 	}
+
+	//球の中心座標を設定します
+	sphere.m_sphere.Center = m_pos;
+	sphere.m_sphere.Center.y += 0.5;
+	//球の半径を設定
+	sphere.m_sphere.Radius = 0.3;
+	//当たり判定をしたいタイプを設定
+	sphere.m_type = KdCollider::TypeEvent;
+
+	for (auto& obj : SceneManager::Instance().GetObjList())
+	{
+		//								↓リストをセットしていた
+		if (obj->Intersects(sphere, nullptr)) {
+			//　当たった
+			//　敵オブジェクト確定！！
+			obj->OnHit();
+		}
+	}
 }
 
 void Player::DrawLit()

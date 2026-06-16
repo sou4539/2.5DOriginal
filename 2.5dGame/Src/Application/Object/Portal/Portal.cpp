@@ -1,5 +1,7 @@
 ﻿#include "Portal.h"
 
+#include "../Status/Status.h"
+
 void Portal::Update()
 {
 	m_pos.z -= m_speed;
@@ -14,7 +16,7 @@ void Portal::Update()
 
 	// 拡縮行列
 	Math::Matrix scaleMat;
-	scaleMat = Math::Matrix::CreateScale(2,3,1);
+	scaleMat = Math::Matrix::CreateScale(2, 3, 1);
 	//scaleMat = Math::Matrix::CreateScale(100.0f, 100.0f, 100.0f);
 
 	// 行列合成 (S * R * T)
@@ -27,9 +29,44 @@ void Portal::DrawLit()
 	KdShaderManager::Instance().m_StandardShader.DrawPolygon(*m_polygon, m_mWorld);
 }
 
+void Portal::OnHit()
+{
+	switch (m_PortalType)
+	{
+	case AtkUp:	//攻撃力アップ
+		m_status->SetAtk(m_status->GetAtk() + 1);
+		break;
+	case	HpUp:		//体力アップ
+		m_status->SetAtk(m_status->GetAtk() + 1);
+		break;
+	case	MSpdUp:		//移動速度アップ
+		m_status->SetAtk(m_status->GetAtk() + 0.01);
+		break;
+	case	WSpdUp:		//連射速度アップ
+		m_status->SetAtk(m_status->GetAtk() - 0.1);
+		break;
+	case	WSplUp:		//詠唱速度アップ
+		m_status->SetAtk(m_status->GetAtk() + 0.001);
+		break;
+	case	ExplodeOn:	//爆炎魔法のon/off
+		m_status->SetAtk(m_status->GetAtk() + 1);
+		break;
+	case	ExplodeUp:	//爆炎魔法の数アップ
+		m_status->SetAtk(m_status->GetAtk() + 1);
+		break;
+	case	ExSpdUp:	//爆炎魔法の連射速度アップ
+		m_status->SetAtk(m_status->GetAtk() + 1);
+		break;
+	case	ExSplUp:	//爆炎魔法の詠唱速度アップ
+		m_status->SetAtk(m_status->GetAtk() + 0.001);
+		break;
+	}
+}
+
 void Portal::Init()
 {
 	// メモリ確保
+	m_status = std::make_shared<Status>();
 	m_polygon = std::make_shared<KdSquarePolygon>();
 
 	// 画像読み込み
@@ -40,20 +77,14 @@ void Portal::Init()
 	//画像の原点を変更
 	m_polygon->SetPivot(KdSquarePolygon::PivotType::Center_Bottom);
 	//画像を分割
-	m_polygon->SetSplit(4,2);
+	m_polygon->SetSplit(4, 2);
 	m_polygon->SetUVRect(0);
 	//プレイヤーの初期位置
 	m_pos = {};
-	
+
 	//どの強化が出るのか
 	m_PortalType = KdRandom::GetInt(0, 5);
 	m_PortalNum[m_PortalType];
-	
-	//switch (m_PortalType)
-	//{
-	//case 0:
-	//}
-
 
 	//当たられる側の処理========================================
 	//当たり判定をつけたいから実体化

@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+class Status;
+
 class Portal : public KdGameObject
 {
 public:
@@ -9,9 +11,12 @@ public:
 		AtkUp,		//攻撃力アップ
 		HpUp,		//体力アップ
 		MSpdUp,		//移動速度アップ
-		ASpdUp,		//連射速度アップ
-		SSpdUp,		//詠唱速度アップ
-		Explode,	//爆炎魔法
+		WSpdUp,		//連射速度アップ
+		WSplUp,		//詠唱速度アップ
+		ExplodeOn,	//爆炎魔法のon/off
+		ExplodeUp,	//爆炎魔法の数アップ
+		ExSpdUp,	//爆炎魔法の連射速度アップ
+		ExSplUp,	//爆炎魔法の詠唱速度アップ
 	};
 
 	Portal() { Init(); }
@@ -22,6 +27,8 @@ public:
 
 	void DrawLit() override;
 	//void GenerateDepthMapFromLight() override;
+
+	void OnHit() override;
 
 	void SetPos(const Math::Vector3& _pos)override
 	{
@@ -38,4 +45,6 @@ private:
 	int m_PortalNum[6];
 
 	float m_speed = 0.05f;
+
+	std::shared_ptr<Status> m_status;
 };
