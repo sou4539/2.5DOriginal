@@ -1,5 +1,6 @@
 ﻿#include "Player.h"
 
+#include "../Status/Status.h"
 #include "../Weapon/Weapon.h"
 #include "../Explode/Explode.h"
 #include "../../Scene/SceneManager.h"
@@ -18,6 +19,8 @@ void Player::Init()
 	m_polygon->SetSplit(3, 4);
 	//プレイヤーの初期位置
 	m_pos = { 0,0,-5 };
+
+	m_status = std::make_shared<Status>();
 }
 
 void Player::Update()
@@ -29,24 +32,33 @@ void Player::Update()
 	else
 	{
 		m_pos.z = 0;
-		if (WeaponWait == 0)
+		if (m_status->GetWWait() == 0)
 		{
 			std::shared_ptr<Weapon> m_weapon;
 			m_weapon = std::make_shared<Weapon>();
 			m_weapon->SetPos(m_pos);
+			m_weapon->SetOwner(shared_from_this());
 			SceneManager::Instance().AddObject(m_weapon);
-			WeaponWait = 30;
+			m_status->SetWWait(m_status->GetWWaitMax());
 		}
-		//if (ExplodeFlg)
+		//if (m_status->GetExFlg())
 		{
-			if (ExplodeWait == 0)
+			if (m_status->GetExWait() == 0)
 			{
 				std::shared_ptr<Explode> m_explode;
 				m_explode = std::make_shared<Explode>();
 				m_explode->SetPos(m_pos);
+				m_explode->SetOwner(shared_from_this());
 				SceneManager::Instance().AddObject(m_explode);
-				ExplodeWait = 30;
+				m_status->SetExWait(m_status->GetExWaitMax());
 			}
+		}
+
+		m_Move += 0.05;
+		if (m_Move >= 40)
+		{
+			m_EnemyReSpawn = true;
+			m_Move = 0;
 		}
 	}
 
@@ -54,23 +66,20 @@ void Player::Update()
 	// 2.5D仕様の移動速度調整 (左右移動のみ)
 	if (GetAsyncKeyState('A') & 0x8000)
 	{
-		m_pos.x -= m_speed;
+		m_pos.x -= m_status->GetSpd();
 		m_polygon->SetUVRect(9);
 	}
 	if (GetAsyncKeyState('D') & 0x8000)
 	{
-		m_pos.x += m_speed;
+		m_pos.x += m_status->GetSpd();
 		m_polygon->SetUVRect(11);
 	}
 
+	m_status->SetWWait(m_status->GetWWait() - 1.0f);
+	if (m_status->GetWWait()<=0)m_status->SetWWait(0);
 
-
-
-	WeaponWait--;
-	if (WeaponWait <= 0)WeaponWait = 0;
-
-	ExplodeWait--;
-	if (ExplodeWait <= 0)ExplodeWait = 0;
+	m_status->SetExWait(m_status->GetExWait() - 1.0f);
+	if (m_status->GetExWait()<=0)m_status->SetExWait(0);
 
 	// 座標行列の作成とワールド行列の更新
 	m_mWorld = Math::Matrix::CreateTranslation(m_pos);

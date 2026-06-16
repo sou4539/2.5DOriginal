@@ -30,7 +30,7 @@ void TitleScene::Init()
 	for (int i = 0; i < 4; i++)
 	{
 		stage = std::make_shared<Stage>();
-		stage->SetPos({ 0,0,i * 12.0f - 1.0f });
+		stage->SetPos({ 0,0,i * 12.0f - 2.0f });
 		m_objList.push_back(stage);
 	}
 

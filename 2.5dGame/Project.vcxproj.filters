@@ -103,6 +103,9 @@
     <Filter Include="Src\Application\Object\Explode">
       <UniqueIdentifier>{992468a0-40ef-4cbf-bce4-dddd266906e7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\Object\Status">
+      <UniqueIdentifier>{20169056-d555-43e4-a0d5-8ecfcb3153f4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -303,6 +306,9 @@
     <ClInclude Include="Src\Application\Object\Explode\Explode.h">
       <Filter>Src\Application\Object\Explode</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\Object\Status\Status.h">
+      <Filter>Src\Application\Object\Status</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -472,6 +478,9 @@
     </ClCompile>
     <ClCompile Include="Src\Application\Object\Explode\Explode.cpp">
       <Filter>Src\Application\Object\Explode</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\Object\Status\Status.cpp">
+      <Filter>Src\Application\Object\Status</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

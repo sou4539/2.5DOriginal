@@ -5,7 +5,7 @@
 
 void Enemy::Init()
 {
-	m_Hp = 10;
+	m_Hp = 11;
 	//デバック用
 	//m_pDebugWire = std::make_unique<KdDebugWireFrame>();
 
@@ -19,7 +19,10 @@ void Enemy::Init()
 	//画像を分割
 	m_polygon->SetSplit(3, 4);
 	//プレイヤーの初期位置
-	m_pos = { 0,0,0 };
+	m_pos = { 0,0,30 };
+	//敵の座標をランダムに変化
+	x = KdRandom::GetFloat(-6,6);
+	m_pos.x += x;
 
 	m_portal = std::make_shared<Portal>();
 
@@ -42,13 +45,13 @@ void Enemy::Update()
 	m_pos.z -= m_speed;
 
 	if (m_pos.z <= 0)m_pos.z += 30;
-	if (m_pos.z <= 20)
+	if (m_Hp <= 0)
 	{
 		m_portal->SetPos(m_pos);
 		SceneManager::Instance().AddObject(m_portal);
 		m_isExpired = true;
 	}
-	
+
 
 	//でかくする
 	Math::Matrix scaleMat = Math::Matrix::CreateScale(2);
@@ -74,5 +77,9 @@ void Enemy::GenerateDepthMapFromLight()
 
 void Enemy::OnHit()
 {
-	m_Hp -= m_Damage;
+	if (m_Damage != 0)
+	{
+		m_Hp -= m_Damage;
+		m_Damage = 0;
+	}
 }

@@ -13,6 +13,18 @@ void GameScene::Event()
 		SceneManager::Instance().SetNextScene(SceneManager::SceneType::Title);
 	}
 
+	if(m_player->GetEnemyReSpawn())
+	{
+		// 敵（雑魚）を追加
+		std::shared_ptr<Enemy> enemy;
+		enemy = std::make_shared<Enemy>();
+		m_objList.push_back(enemy);
+		// プレイヤーに敵情報を登録
+		m_player->RegistEnemy(enemy);
+		m_player->SetEnemyReSpawn(false);
+	}
+	
+
 	Math::Vector3 camPos = { 0,10,-5 };
 	Math::Matrix rotateMat = Math::Matrix::CreateRotationX(DirectX::XMConvertToRadians(45));
 	Math::Matrix transMat = Math::Matrix::CreateTranslation({ camPos.x + m_player->GetPos().x,10,-5 });
@@ -42,7 +54,9 @@ void GameScene::Init()
 	for (int i = 0; i < 4; i++)
 	{
 		stage = std::make_shared<Stage>();
-		stage->SetPos({ 0,0,i * 12.0f - 1.0f });
+		stage->SetPos({ 0,0,i * 12.0f - 2.0f });
 		m_objList.push_back(stage);
 	}
+	// プレイヤーに敵情報を登録
+	m_player->RegistEnemy(enemy);
 }

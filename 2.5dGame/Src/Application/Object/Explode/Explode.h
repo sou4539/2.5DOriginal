@@ -1,6 +1,7 @@
 ﻿#pragma once
 
-class Enemy;
+class Player;
+class Status;
 
 class Explode : public KdGameObject
 {
@@ -22,6 +23,10 @@ public:
 		m_pos = _pos;
 	}
 
+	void SetOwner(std::shared_ptr<KdGameObject> owner)
+	{
+		m_wpOwner = owner;
+	}
 private:
 	void Init() override;
 	void Release() {}
@@ -31,13 +36,15 @@ private:
 
 
 	bool ShotFlg = false;
-	std::shared_ptr<Enemy> m_enemy;
 		
 	float d = 0;
 	bool m_outroFlg = false;
 
-	//詠唱速度
-	float m_SpellSpeed = 0.01;
-
 	float m_anime = 0;
+
+	std::weak_ptr<KdGameObject> m_wpOwner;
+
+	std::shared_ptr<Status> m_status;
+
+	bool HitFlg = false;
 };

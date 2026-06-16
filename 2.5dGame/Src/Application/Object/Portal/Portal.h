@@ -3,6 +3,7 @@
 class Portal : public KdGameObject
 {
 public:
+	//強化の種類
 	enum PowerUpType
 	{
 		AtkUp,		//攻撃力アップ

@@ -1,5 +1,8 @@
 ﻿#pragma once
 
+class Enemy;
+class Status;
+
 class Player : public KdGameObject
 {
 public:
@@ -12,6 +15,22 @@ public:
 	void DrawLit() override;
 	void GenerateDepthMapFromLight() override;
 
+	void RegistEnemy(std::shared_ptr<Enemy> enemy)
+	{
+		m_wpEnemyList.push_back(enemy);
+	}
+
+	std::list<std::weak_ptr<Enemy>> GetEnemyList()
+	{
+		return m_wpEnemyList;
+	}
+
+	bool GetEnemyReSpawn()
+	{
+		return m_EnemyReSpawn;
+	}
+
+	void SetEnemyReSpawn(bool _EnemyReSpawn){m_EnemyReSpawn=_EnemyReSpawn;}
 
 private:
 	void Init() override;
@@ -21,24 +40,11 @@ private:
 	std::shared_ptr<KdSquarePolygon> m_polygon;
 	Math::Vector3 m_pos;
 
-	//各種ステータス
-	//攻撃力
-	float m_attack = 1;
-	//体力
-	float m_health = 10;
-	//移動速度
-	float m_speed = 0.2;
-	//攻撃速度
-	float WeaponWait = 0;
-	//詠唱速度
-	//Weaponクラスで使う関数なのでここにはない
-	//爆炎魔法
-	//習得済みかどうか
-	bool ExplodeFlg = false;
-	//攻撃速度
-	float ExplodeWait = 0;
-	//詠唱速度
-	//Explodeクラスで使う関数なのでここにはない
+	std::list<std::weak_ptr<Enemy>> m_wpEnemyList;
+	std::shared_ptr<Status> m_status;
 
-
+	//プレイヤーの移動量を格納する変数
+	float m_Move = 0;
+	//敵のリスポーン関数
+	bool m_EnemyReSpawn = false;
 };

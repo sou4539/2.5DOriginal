@@ -45,6 +45,7 @@ void Portal::Init()
 	//プレイヤーの初期位置
 	m_pos = {};
 	
+	//どの強化が出るのか
 	m_PortalType = KdRandom::GetInt(0, 5);
 	m_PortalNum[m_PortalType];
 	
@@ -52,4 +53,16 @@ void Portal::Init()
 	//{
 	//case 0:
 	//}
+
+
+	//当たられる側の処理========================================
+	//当たり判定をつけたいから実体化
+	m_pCollider = std::make_unique<KdCollider>();
+	//モデルの形状で当たり判定を登録
+	m_pCollider->RegisterCollisionShape(
+		"PortalCollision",		//当たり判定を識別名
+		{ 0,0.5,0 },
+		0.4f,
+		KdCollider::TypeEvent);
+	//==========================================================
 }

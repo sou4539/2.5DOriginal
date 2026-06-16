@@ -1,7 +1,9 @@
 ﻿#include "Explode.h"
 
+#include "../Status/Status.h"
 #include "../Enemy/Enemy.h"
-#include "../../Scene/SceneManager.h"
+#include "../Player/Player.h"
+//#include "../../Scene/SceneManager.h"
 
 void Explode::Update()
 {
@@ -14,7 +16,7 @@ void Explode::Update()
 
 	if (d > 0)
 	{
-		d -= m_SpellSpeed;
+		d -= m_status->GetExSpd();
 	}
 	else 
 	{
@@ -52,15 +54,36 @@ void Explode::PostUpdate()
 	//デバック
 	m_pDebugWire->AddDebugSphere(sphere.m_sphere.Center, sphere.m_sphere.Radius, kRedColor);
 
-	for (auto& obj : SceneManager::Instance().GetObjList())
+	// 手順①オーナー(プレイヤー = 弾を発射した人)を受け取る
+	std::shared_ptr<Player> _player = std::static_pointer_cast<Player>(m_wpOwner.lock());
+	if (_player)
 	{
-		//								↓リストをセットしていた
-		if (obj->Intersects(sphere, nullptr)) {
-			//　当たった
-			//　敵オブジェクト確定！！
-			m_enemy->SetDamage(1);
-			obj->OnHit();
-			OnHit();
+		// 手順②オーナー(プレイヤー)が持っている敵のリストを取得
+		std::list<std::weak_ptr<Enemy>> _enemyList = _player->GetEnemyList();
+		auto it = _enemyList.begin();
+
+		while (it != _enemyList.end())
+		{
+			std::shared_ptr<Enemy> _enemy = it->lock();
+			if (_enemy)
+			{
+				if (_enemy->Intersects(sphere, nullptr)) {
+					//　当たった
+					//　敵オブジェクト確定！！
+					if(!HitFlg)
+					{
+						_enemy->SetDamage(3);
+						HitFlg = true;
+					}
+					else
+					{
+						_enemy->SetDamage(0);
+					}
+					_enemy->OnHit();
+					OnHit();
+				}
+			}
+			++it;	// 次の要素へイテレータを進める
 		}
 	}
 }
@@ -76,8 +99,7 @@ void Explode::OutroUpdate()
 
 void Explode::OnHit()
 {
-
-	m_anime += 0.5;
+	if(m_anime<=15)m_anime += 0.5;
 	m_polygon->SetUVRect(int(m_anime));
 	m_outroFlg = true;
 	
@@ -97,6 +119,7 @@ void Explode::Init()
 	m_pos = {};
 	d = 1;
 	m_anime = 0;
+	HitFlg = false;
 	// メモリ確保
 	m_polygon = std::make_shared<KdSquarePolygon>();
 
@@ -112,6 +135,5 @@ void Explode::Init()
 	//デバック用
 	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
 
-
-	m_enemy = std::make_shared<Enemy>();
+	m_status = std::make_shared<Status>();
 }

@@ -27,4 +27,6 @@ private:
 
 	float m_Hp = 10;
 	float m_Damage = 0;
+
+	float x = 0;
 };
