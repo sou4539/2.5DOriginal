@@ -10,7 +10,7 @@ public:
 	//攻撃力
 	float GetAtk() { return m_attack; }
 	//体力
-	float GetHp() { return m_health;}
+	float GetHp() { return m_health; }
 	//移動速度
 	float GetSpd() { return m_speed; }
 	//攻撃速度
@@ -21,6 +21,8 @@ public:
 	//爆炎魔法
 	//習得済みかどうか
 	bool GetExFlg() { return m_ExplodeFlg; }
+	//爆炎魔法の打てる数
+	int GetExNum() { return m_ExplodeNum; }
 	//攻撃速度
 	float GetExWait() { return m_ExplodeWait; }
 	float GetExWaitMax() { return m_ExplodeWaitMax; }
@@ -35,12 +37,14 @@ public:
 	//移動速度
 	void SetSpd(float _speed) { m_speed = _speed; }
 	//攻撃速度
-	void SetWWait(float _WeaponWait) {m_WeaponWait = _WeaponWait; }
+	void SetWWait(float _WeaponWait) { m_WeaponWait = _WeaponWait; }
 	//詠唱速度
 	void SetWSpd(float _WeaponSpeed) { m_WeaponSpeed = _WeaponSpeed; }
 	//爆炎魔法
 	//習得済みかどうか
 	void SetExFlg(bool _ExplodeFlg) { m_ExplodeFlg = _ExplodeFlg; }
+	//爆炎魔法の打てる数
+	void SetExNum(int _ExplodeNum) { m_ExplodeNum = _ExplodeNum; }
 	//攻撃速度
 	void SetExWait(float _ExplodeWait) { m_ExplodeWait = _ExplodeWait; }
 	//詠唱速度
@@ -66,6 +70,8 @@ private:
 	//爆炎魔法
 	//習得済みかどうか
 	bool m_ExplodeFlg = false;
+	//爆炎魔法の打てる数
+	int m_ExplodeNum = 1;
 	//攻撃速度
 	float m_ExplodeWait = 0;
 	float m_ExplodeWaitMax = 180;

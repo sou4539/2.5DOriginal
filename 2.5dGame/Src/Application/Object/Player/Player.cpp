@@ -41,16 +41,19 @@ void Player::Update()
 			SceneManager::Instance().AddObject(m_weapon);
 			m_status->SetWWait(m_status->GetWWaitMax());
 		}
-		//if (m_status->GetExFlg())
+		if (m_status->GetExFlg())
 		{
-			if (m_status->GetExWait() == 0)
+			for (int i = 0; i < m_status->GetExNum(); i++)
 			{
-				std::shared_ptr<Explode> m_explode;
-				m_explode = std::make_shared<Explode>();
-				m_explode->SetPos(m_pos);
-				m_explode->SetOwner(shared_from_this());
-				SceneManager::Instance().AddObject(m_explode);
-				m_status->SetExWait(m_status->GetExWaitMax());
+				if (m_status->GetExWait() == 0)
+				{
+					std::shared_ptr<Explode> m_explode;
+					m_explode = std::make_shared<Explode>();
+					m_explode->SetPos(m_pos);
+					m_explode->SetOwner(shared_from_this());
+					SceneManager::Instance().AddObject(m_explode);
+					m_status->SetExWait(m_status->GetExWaitMax());
+				}
 			}
 		}
 
@@ -76,10 +79,10 @@ void Player::Update()
 	}
 
 	m_status->SetWWait(m_status->GetWWait() - 1.0f);
-	if (m_status->GetWWait()<=0)m_status->SetWWait(0);
+	if (m_status->GetWWait() <= 0)m_status->SetWWait(0);
 
 	m_status->SetExWait(m_status->GetExWait() - 1.0f);
-	if (m_status->GetExWait()<=0)m_status->SetExWait(0);
+	if (m_status->GetExWait() <= 0)m_status->SetExWait(0);
 
 	// 座標行列の作成とワールド行列の更新
 	m_mWorld = Math::Matrix::CreateTranslation(m_pos);

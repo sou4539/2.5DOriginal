@@ -8,7 +8,8 @@ void Status::Init()
 	m_WeaponWaitMax = 120;
 	m_WeaponWait = m_WeaponWaitMax;
 	m_WeaponSpeed = 0.05f;
-	m_ExplodeFlg = false;
+	m_ExplodeFlg = true;
+	m_ExplodeNum = 1;
 	m_ExplodeWaitMax = 180;
 	m_ExplodeWait = m_ExplodeWaitMax;
 	m_ExplodeSpeed = 0.01f;

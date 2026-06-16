@@ -13,7 +13,7 @@ void GameScene::Event()
 		SceneManager::Instance().SetNextScene(SceneManager::SceneType::Title);
 	}
 
-	if(m_player->GetEnemyReSpawn())
+	if (m_player->GetEnemyReSpawn())
 	{
 		// 敵（雑魚）を追加
 		std::shared_ptr<Enemy> enemy;
@@ -23,7 +23,7 @@ void GameScene::Event()
 		m_player->RegistEnemy(enemy);
 		m_player->SetEnemyReSpawn(false);
 	}
-	
+
 
 	Math::Vector3 camPos = { 0,10,-5 };
 	Math::Matrix rotateMat = Math::Matrix::CreateRotationX(DirectX::XMConvertToRadians(45));
