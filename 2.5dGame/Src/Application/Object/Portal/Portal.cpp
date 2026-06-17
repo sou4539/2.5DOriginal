@@ -33,32 +33,32 @@ void Portal::OnHit()
 {
 	switch (m_PortalType)
 	{
-	case AtkUp:	//攻撃力アップ
+	case	AtkUp:	//攻撃力アップ
 		m_status->SetAtk(m_status->GetAtk() + 1);
 		break;
 	case	HpUp:		//体力アップ
-		m_status->SetAtk(m_status->GetAtk() + 1);
+		m_status->SetHp(m_status->GetHp() + 1);
 		break;
 	case	MSpdUp:		//移動速度アップ
-		m_status->SetAtk(m_status->GetAtk() + 0.01);
+		m_status->SetSpd(m_status->GetSpd() + 0.01);
 		break;
 	case	WSpdUp:		//連射速度アップ
-		m_status->SetAtk(m_status->GetAtk() - 0.1);
+		m_status->SetWWait(m_status->GetWWait() - 0.1);
 		break;
 	case	WSplUp:		//詠唱速度アップ
-		m_status->SetAtk(m_status->GetAtk() + 0.001);
+		m_status->SetWSpd(m_status->GetWSpd() + 0.001);
 		break;
 	case	ExplodeOn:	//爆炎魔法のon/off
-		m_status->SetAtk(m_status->GetAtk() + 1);
+		m_status->SetExFlg(true);
 		break;
 	case	ExplodeUp:	//爆炎魔法の数アップ
-		m_status->SetAtk(m_status->GetAtk() + 1);
+		m_status->SetExNum(m_status->GetExNum() + 1);
 		break;
 	case	ExSpdUp:	//爆炎魔法の連射速度アップ
-		m_status->SetAtk(m_status->GetAtk() + 1);
+		m_status->SetExWait(m_status->GetExWait() + 1);
 		break;
 	case	ExSplUp:	//爆炎魔法の詠唱速度アップ
-		m_status->SetAtk(m_status->GetAtk() + 0.001);
+		m_status->SetExSpd(m_status->GetExSpd() + 0.001);
 		break;
 	}
 }
@@ -66,7 +66,6 @@ void Portal::OnHit()
 void Portal::Init()
 {
 	// メモリ確保
-	m_status = std::make_shared<Status>();
 	m_polygon = std::make_shared<KdSquarePolygon>();
 
 	// 画像読み込み
